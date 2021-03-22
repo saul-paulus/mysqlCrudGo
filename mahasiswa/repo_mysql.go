@@ -55,7 +55,7 @@ func CreateMhs(db *sql.DB, mhs *models.Mahasiswa) (err error) {
 
 	lastId, err := resQuery.LastInsertId()
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("error pada" + err.Error())
 		return err
 	}
 	mhs.ID = int(lastId)
@@ -64,4 +64,18 @@ func CreateMhs(db *sql.DB, mhs *models.Mahasiswa) (err error) {
 
 	return nil
 
+}
+
+func UpdateMhs(db *sql.DB, mhs *models.Mahasiswa) (err error) {
+
+	sqlTxt := fmt.Sprintf("UPDATE %v SET nim=?, nama=?, semester=?,created_at=?, updated_at=? WHERE id=?", table)
+	timeNow := time.Now()
+
+	_, err = db.Exec(sqlTxt, mhs.NIM, mhs.Nama, mhs.Semester, timeNow, timeNow,mhs.ID)
+
+	if err != nil {
+		fmt.Println("Error pada " + err.Error())
+		return err
+	}
+	return nil
 }
