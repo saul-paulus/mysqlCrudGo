@@ -9,18 +9,18 @@ import (
 )
 
 const (
-	UserName = "saul"
+	UserName   = "saul"
 	NameServer = "localhost"
-	Password = "123456789"
-	DbName = "db_mhsApi"
-	Driver = "mysql"
+	Password   = "123456789"
+	DbName     = "db_mhsApi"
+	Driver     = "mysql"
 )
 
-func Mysql() (*sql.DB, error){
-	UrlDb := fmt.Sprintf("%s:%v@/%s",UserName,Password,DbName)
-	db, err := sql.Open(Driver,UrlDb)
+func Mysql() (*sql.DB, error) {
+	UrlDb := fmt.Sprintf("%v:%v@/%v", UserName, Password, DbName)
+	db, err := sql.Open(Driver, UrlDb)
 
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 	return db, nil

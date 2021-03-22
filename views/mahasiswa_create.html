@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form method="POST">
+        <label for="nim">NIM</label>
+        <input type="number" id="nim" /><br>
+        <label for="nama">Nama</label>
+        <input type="text" id="nama" /><br>
+        <label for="semester">Semester</label>
+        <input type="number" id="semester" /><br>
+        <input type="button" value="submit" onClick="kirimJson()" /><br>
+    </form>
+
+    <script>
+        async function kirimJson() {
+            let data = {};
+            let keys = [`nim`, `nama`, `semester`]
+            for (let k of keys) {
+                data[k] = document.getElementById(k).value;
+            }
+            data.nim = parseInt(data.nim)
+            data.semester = parseInt(data.semester)
+
+            let res = await fetch('', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            }).json().then(data => {
+                console.log(data)
+            }).catch(error => console.error())
+        }
+    </script>
+</body>
+
+</html>

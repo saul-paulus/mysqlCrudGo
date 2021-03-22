@@ -67,33 +67,37 @@ func (s *Server) GetAllMahasiswa() handler {
 		utils.ResponseJson(w, map[string]interface{}{
 			"data": mahasiswas,
 		})
+		return
 	}
 
 }
 
-// PostMahasiswa
-func (s *Server) PostMahasiswa() handler {
+// Create data Mahasiswa
+func (s *Server) PostMahasiswa() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "GET" {
 			http.ServeFile(w, r, s.ViewDir+"mahasiswa_create.html")
 			return
 		}
+
 		mhs := models.Mahasiswa{}
 
-		err := json.NewDecoder(r.Body).Decode(&mhs)
-
-		if utils.IsError(w, err) {
+		if err := json.NewDecoder(r.Body).Decode(&mhs); err != nil {
+			utils.IsError(w, err)
 			return
 		}
 
-		err = mahasiswa.CreateMhs(s.db, &mhs)
-		if utils.IsError(w, err) {
+		if err := mahasiswa.CreateMhs(s.db, &mhs); err != nil {
+			utils.IsError(w, err)
 			return
 		}
 
 		utils.ResponseJson(w, map[string]interface{}{
 			"data": mhs,
 		})
-	}
 
+		utils.ResponseJson(w, map[string]string{
+			"message": "Data berhasil dibuat",
+		})
+	}
 }
