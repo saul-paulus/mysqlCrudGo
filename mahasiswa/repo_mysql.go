@@ -11,6 +11,7 @@ import (
 const table = "mahasiswa"
 const datetime_layout = "2006-01-02 15:04:05"
 
+//menghandel pengambilan data di databases
 func GetAll(db *sql.DB) (mahasiswa []models.Mahasiswa, err error) {
 
 	var mahasiswas []models.Mahasiswa
@@ -43,7 +44,7 @@ func GetAll(db *sql.DB) (mahasiswa []models.Mahasiswa, err error) {
 	}
 	return mahasiswas, nil
 }
-
+//menghanel pembuatan data mahasiswa
 func CreateMhs(db *sql.DB, mhs *models.Mahasiswa) (err error) {
 	sqlTxt := fmt.Sprintf("INSERT INTO %v (nim, nama, semester, created_at, updated_at) VALUES(?,?,?,?,?)", table)
 	timeNow := time.Now()
@@ -65,7 +66,7 @@ func CreateMhs(db *sql.DB, mhs *models.Mahasiswa) (err error) {
 	return nil
 
 }
-
+//menghandel untuk perubahan data
 func UpdateMhs(db *sql.DB, mhs *models.Mahasiswa) (err error) {
 
 	sqlTxt := fmt.Sprintf("UPDATE %v SET nim=?, nama=?, semester=?,created_at=?, updated_at=? WHERE id=?", table)
@@ -79,3 +80,6 @@ func UpdateMhs(db *sql.DB, mhs *models.Mahasiswa) (err error) {
 	}
 	return nil
 }
+
+
+

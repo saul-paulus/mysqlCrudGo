@@ -35,7 +35,7 @@ func (s *Server) Listen() {
 	http.HandleFunc("/api/v1/getallmahasiswa", s.GetAllMahasiswa())
 	http.HandleFunc("/api/v1/postmahasiswa", s.PostMahasiswa())
     http.HandleFunc("/api/v1/putmahasiswa", s.UpdateMahasiswa())
-
+    http.HandleFunc("/api/v1/deletemahasiswa",s.DeleteMahasiswa())
 
 	fmt.Println("Server berjalan di port 127.0.0.1:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -105,7 +105,7 @@ func (s *Server) PostMahasiswa() func(w http.ResponseWriter, r *http.Request) {
 }
 
 // Update data mahasiswa
-func (s *Server) UpdateMahasiswa() func(w http.ResponseWriter, r *http.Request) {
+func (s *Server) UpdateMahasiswa() func(w http.ResponseWriter, r  *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		mhs := models.Mahasiswa{}
 
@@ -123,4 +123,20 @@ func (s *Server) UpdateMahasiswa() func(w http.ResponseWriter, r *http.Request) 
 			"message": "Data berhasil di update",
 		})
 	}
+}
+
+//Delete data Mahasiswa
+func (s *Server) DeleteMahasiswa() func(w http.ResponseWriter, r *http.Request){
+    return func(w http.ResponseWriter, r *http.Request){
+        mhs:=models.Mahasiswa{}
+    }
+    if err := mahasiswa.DeleteMhs(s.db, &mhs); err != nil{
+        utils.IsError(w, err)
+        return
+    }
+
+        utils.ResponseJson(w, map[string]interface{}{
+            "message":"Data berhasil dihapus",
+        })
+
 }
