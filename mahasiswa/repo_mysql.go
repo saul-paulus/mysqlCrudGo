@@ -81,5 +81,16 @@ func UpdateMhs(db *sql.DB, mhs *models.Mahasiswa) (err error) {
 	return nil
 }
 
+//menghandel untuk menghapus data di databases
+func DeleteMhs(db *sql.DB, mhs *models.Mahasiswa)(err error){
+    sqlTxt := fmt.Sprintf("DELETE FROM %v WHERE id = %d", table, mhs.ID)
+            resQuery, err := db.Exec(sqlTxt)
+                if err != nil {
+                    fmt.Println("error pada "+ err.Error())
+                    return err
+                }
+            _, err = resQuery.RowsAffected()
 
+        return nil
+}
 

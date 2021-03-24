@@ -10,6 +10,7 @@ import (
 	"pendalaman-res-api/mahasiswa"
 	"pendalaman-res-api/models"
 	"pendalaman-res-api/utils"
+    "strconv"
 )
 
 type Server struct {
@@ -128,15 +129,26 @@ func (s *Server) UpdateMahasiswa() func(w http.ResponseWriter, r  *http.Request)
 //Delete data Mahasiswa
 func (s *Server) DeleteMahasiswa() func(w http.ResponseWriter, r *http.Request){
     return func(w http.ResponseWriter, r *http.Request){
-        mhs:=models.Mahasiswa{}
-    }
-    if err := mahasiswa.DeleteMhs(s.db, &mhs); err != nil{
+
+        mhs :=models.Mahasiswa{}
+
+
+        id := r.URL.Query().Get("id")
+
+
+        if id == "" {
+            fmt.Println("id tidak boleh kosong")
+
+        }
+
+        mhs.ID, _ = strconv.Atoi(id)
+      if err := mahasiswa.DeleteMhs(s.db, &mhs); err != nil{
         utils.IsError(w, err)
         return
-    }
+        }
 
         utils.ResponseJson(w, map[string]interface{}{
             "message":"Data berhasil dihapus",
         })
-
+    }
 }
