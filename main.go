@@ -10,7 +10,7 @@ import (
 	"pendalaman-res-api/mahasiswa"
 	"pendalaman-res-api/models"
 	"pendalaman-res-api/utils"
-    "strconv"
+	"strconv"
 )
 
 type Server struct {
@@ -35,8 +35,8 @@ func (s *Server) Listen() {
 	http.HandleFunc("/index", GetIndex)
 	http.HandleFunc("/api/v1/getallmahasiswa", s.GetAllMahasiswa())
 	http.HandleFunc("/api/v1/postmahasiswa", s.PostMahasiswa())
-    http.HandleFunc("/api/v1/putmahasiswa", s.UpdateMahasiswa())
-    http.HandleFunc("/api/v1/deletemahasiswa",s.DeleteMahasiswa())
+	http.HandleFunc("/api/v1/putmahasiswa", s.UpdateMahasiswa())
+	http.HandleFunc("/api/v1/deletemahasiswa", s.DeleteMahasiswa())
 
 	fmt.Println("Server berjalan di port 127.0.0.1:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -55,12 +55,11 @@ func GetIndex(w http.ResponseWriter, r *http.Request) {
 		"message": "selamat datang di server backend",
 		"status":  200,
 	})
+
 }
 
-type handler func(w http.ResponseWriter, r *http.Request)
-
 // GetAllMahasiswa
-func (s *Server) GetAllMahasiswa() handler {
+func (s *Server) GetAllMahasiswa() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		mahasiswas, err := mahasiswa.GetAll(s.db)
 		if utils.IsError(w, err) {
@@ -106,14 +105,14 @@ func (s *Server) PostMahasiswa() func(w http.ResponseWriter, r *http.Request) {
 }
 
 // Update data mahasiswa
-func (s *Server) UpdateMahasiswa() func(w http.ResponseWriter, r  *http.Request) {
+func (s *Server) UpdateMahasiswa() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		mhs := models.Mahasiswa{}
 
-        if err := json.NewDecoder(r.Body).Decode(&mhs); err != nil{
-                utils.IsError(w, err)
-                return
-            }
+		if err := json.NewDecoder(r.Body).Decode(&mhs); err != nil {
+			utils.IsError(w, err)
+			return
+		}
 
 		if err := mahasiswa.UpdateMhs(s.db, &mhs); err != nil {
 			utils.IsError(w, err)
@@ -127,28 +126,26 @@ func (s *Server) UpdateMahasiswa() func(w http.ResponseWriter, r  *http.Request)
 }
 
 //Delete data Mahasiswa
-func (s *Server) DeleteMahasiswa() func(w http.ResponseWriter, r *http.Request){
-    return func(w http.ResponseWriter, r *http.Request){
+func (s *Server) DeleteMahasiswa() func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 
-        mhs :=models.Mahasiswa{}
+		mhs := models.Mahasiswa{}
 
+		id := r.URL.Query().Get("id")
 
-        id := r.URL.Query().Get("id")
+		if id == "" {
+			fmt.Println("id tidak boleh kosong")
 
+		}
 
-        if id == "" {
-            fmt.Println("id tidak boleh kosong")
+		mhs.ID, _ = strconv.Atoi(id)
+		if err := mahasiswa.DeleteMhs(s.db, &mhs); err != nil {
+			utils.IsError(w, err)
+			return
+		}
 
-        }
-
-        mhs.ID, _ = strconv.Atoi(id)
-      if err := mahasiswa.DeleteMhs(s.db, &mhs); err != nil{
-        utils.IsError(w, err)
-        return
-        }
-
-        utils.ResponseJson(w, map[string]interface{}{
-            "message":"Data berhasil dihapus",
-        })
-    }
+		utils.ResponseJson(w, map[string]interface{}{
+			"message": "Data berhasil dihapus",
+		})
+	}
 }
